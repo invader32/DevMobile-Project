@@ -1,5 +1,7 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'settings.dart';
 
@@ -12,6 +14,7 @@ class addpage extends StatefulWidget {
 
 class _AddPageState extends State<addpage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  Uint8List? _pickedImageBytes;
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +53,43 @@ class _AddPageState extends State<addpage> {
             ),
           ),
           SizedBox(height: 80),
-          buildInputField("Full Name"),
-          buildInputField("Age"),
-          buildInputField("Address"),
+          buildInputField("Full Name :"),
+          buildInputField("Age           :"),
+          buildInputField("Address   :"),
+          SizedBox(height: 20),
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: 20),
+                child: Text(
+                  "Import Image",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: ElevatedButton(
+                    onPressed: _pickImage,
+                    child: Text("Pick Image"),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          if (_pickedImageBytes != null)
+            Image.memory(
+              _pickedImageBytes!,
+              width: 200,
+              height: 200,
+              fit: BoxFit.cover,
+            ),
+
         ],
+
       ),
+
     );
   }
 
@@ -78,7 +113,7 @@ class _AddPageState extends State<addpage> {
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               labelText,
-              style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
           Expanded(
@@ -159,5 +194,17 @@ class _AddPageState extends State<addpage> {
         centerTitle: true,
       ),
     );
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      final Uint8List bytes = await pickedImage.readAsBytes();
+      setState(() {
+        _pickedImageBytes = bytes;
+      });
+    }
   }
 }
