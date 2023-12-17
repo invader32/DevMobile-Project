@@ -219,7 +219,7 @@ class _HomePageState extends State<HomePage> {
         case 1:
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => CameraPage()),
+            MaterialPageRoute(builder: (context) => CameraApp()),
           );
           break;
         case 2:
